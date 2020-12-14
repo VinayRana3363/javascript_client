@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
-  Border, Input, InputBrown, InputRed, Error,
+  Input,
 } from './style';
 
 class TextField extends Component {
@@ -10,21 +11,26 @@ class TextField extends Component {
   }
 
   render() {
+    console.log('props value', this.props);
+    // eslint-disable-next-line react/prop-types
+    const { value, disabled } = this.props;
     return (
       <div>
         <h6 hidden>learn react</h6>
-        <Border>
-          <div><p><b>This is a Disabled Input</b></p></div>
-          <div><Input defaultValue="Disabled Input" disabled /></div>
-          <div><p><b>A Valid Input</b></p></div>
-          <div><InputBrown defaultValue="Accessible" type="text" /></div>
-          <div><p><b>An Input with errors</b></p></div>
-          <div><InputRed defaultValue="101" type="text" /></div>
-          <div><Error>Could not be greater than </Error></div>
-        </Border>
+        <Input defaultValue={value} disabled={disabled} />
       </div>
     );
   }
 }
+
+TextField.defaultProps = {
+  value: 'Default Value',
+  disabled: true,
+};
+
+TextField.propTypes = {
+  value: PropTypes.string,
+  disabled: PropTypes.bool,
+};
 
 export default TextField;
