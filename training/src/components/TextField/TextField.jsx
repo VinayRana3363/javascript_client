@@ -11,26 +11,28 @@ class TextField extends Component {
   }
 
   render() {
-    console.log('props value', this.props);
-    // eslint-disable-next-line react/prop-types
-    const { value, disabled } = this.props;
+    const {
+      value, disabled, onChange, error,
+    } = this.props;
     return (
       <div>
         <h6 hidden>learn react</h6>
-        <Input defaultValue={value} disabled={disabled} />
+        <Input defaultValue={error || value} disabled={disabled} onChange={onChange} />
       </div>
     );
   }
 }
 
 TextField.defaultProps = {
-  value: 'Default Value',
   disabled: true,
+  error: '',
 };
 
 TextField.propTypes = {
-  value: PropTypes.string,
+  value: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
+  error: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
 };
 
 export default TextField;

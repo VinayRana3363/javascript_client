@@ -1,2 +1,4 @@
-export { default as TextField } from './TextField/TextField';
-export { default as Slider } from './slider/Slider';
+export * from './TextField';
+export * from './slider';
+export * from './RadioGroup';
+export * from './SelectField';
