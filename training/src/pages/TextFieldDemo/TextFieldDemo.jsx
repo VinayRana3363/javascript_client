@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { TextField, Slider } from '../../components';
 
 import {
-  Border, InputRed, Error,
+  Border, Error,
 } from './style';
 
 class TextFieldDemo extends Component {
@@ -29,7 +29,7 @@ class TextFieldDemo extends Component {
             <TextField
               value="Disabled Input"
               disabled
-              error="Error"
+              valid
             />
           </div>
           <div><p><b>A Valid Input</b></p></div>
@@ -37,11 +37,17 @@ class TextFieldDemo extends Component {
             <TextField
               value="Accessible"
               disabled={false}
-              error="Error"
+              errors
             />
           </div>
           <div><p><b>An Input with errors</b></p></div>
-          <div><InputRed defaultValue="101" type="text" /></div>
+          <div>
+            <TextField
+              value="101"
+              disabled={false}
+              error="Error"
+            />
+          </div>
           <div><Error>Could not be greater than </Error></div>
         </Border>
       </div>

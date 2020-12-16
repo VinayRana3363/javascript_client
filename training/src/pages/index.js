@@ -1,1 +1,2 @@
-export { default as TextFieldDemo } from './TextFieldDemo/TextFieldDemo';
+export * from './TextFieldDemo';
+export * from './InputDemo';
