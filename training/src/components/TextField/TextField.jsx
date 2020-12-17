@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -12,12 +13,12 @@ class TextField extends Component {
 
   render() {
     const {
-      value, disabled, onChange, error,
+      value, disabled, onChange, error, onBlur,
     } = this.props;
     return (
       <div>
         <h6 hidden>learn react</h6>
-        <Input defaultValue={error || value} disabled={disabled} onChange={onChange} />
+        <Input defaultValue={value || error} disabled={disabled} onChange={onChange} onBlur={onBlur} />
       </div>
     );
   }
@@ -33,6 +34,7 @@ TextField.propTypes = {
   disabled: PropTypes.bool,
   error: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  onBlur: PropTypes.func.isRequired,
 };
 
 export default TextField;

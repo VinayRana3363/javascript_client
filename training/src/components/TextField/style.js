@@ -19,6 +19,12 @@ ${(props) => props.errors && css`
 `}
 
 `;
+
+const Error = styled.p`
+color: red;
+margin-bottom: 20px;
+`;
+
 export {
-  Input, Border,
+  Input, Border, Error,
 };
