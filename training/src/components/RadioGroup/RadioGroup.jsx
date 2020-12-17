@@ -15,7 +15,7 @@ class RadioGroup extends Component {
     for (let i = 0; i < options.length; i++) {
       items.push(
         <>
-          <input type="radio" name="options" key={Math.random} value={options[i].value} />
+          <input type="radio" name="options" key={options[i].value} value={options[i].value} />
           {options[i].value}
           <br />
         </>,
