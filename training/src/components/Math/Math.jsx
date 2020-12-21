@@ -21,6 +21,7 @@ const Text = (props) => {
   }
   return (
     <>
+      <h6 hidden>learn react</h6>
       <p>
         The result of
         {' '}
