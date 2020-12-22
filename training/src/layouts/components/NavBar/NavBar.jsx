@@ -5,7 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
-// import { Trainee } from '../../../pages';
+import { Link } from 'react-router-dom';
 
 const styles = (theme) => ({
   root: {
@@ -26,7 +26,7 @@ class NavBar extends Component {
   }
 
   render() {
-    const { classes, children } = this.props;
+    const { classes } = this.props;
 
     return (
       <div className={classes.root}>
@@ -35,14 +35,13 @@ class NavBar extends Component {
             <Typography variant="h6" className={classes.title}>
               Trainee Portal
             </Typography>
-            <Button href="/trainee" color="inherit">TRAINEE</Button>
-            <Button href="/text-field-demo" color="inherit">TEXTFIELD DEMO</Button>
-            <Button href="/input-demo" color="inherit">INPUT DEMO</Button>
-            <Button href="/children-demo" color="inherit">CHILDERN DEMO</Button>
+            <Button component={Link} to="/trainee" color="inherit">TRAINEE</Button>
+            <Button component={Link} to="/text-field-demo" color="inherit">TEXTFIELD DEMO</Button>
+            <Button component={Link} to="/input-demo" color="inherit">INPUT DEMO</Button>
+            <Button component={Link} to="/children-demo" color="inherit">CHILDERN DEMO</Button>
             <Button color="inherit">LOGOUT</Button>
           </Toolbar>
         </AppBar>
-        <div className="private">{children}</div>
       </div>
     );
   }
@@ -50,10 +49,6 @@ class NavBar extends Component {
 
 NavBar.propTypes = {
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
-  children: PropTypes.oneOfType([
-    PropTypes.func,
-    PropTypes.object,
-  ]).isRequired,
 };
 
 export default withStyles(styles)(NavBar);
