@@ -11,9 +11,10 @@ class PrivateLayout extends Component {
   render() {
     const { children } = this.props;
     return (
-      <NavBar>
-        {children}
-      </NavBar>
+      <div>
+        <NavBar />
+        <div>{children}</div>
+      </div>
     );
   }
 }

@@ -12,7 +12,6 @@ class PrivateRoute extends Component {
 
   render() {
     const { component: Page, ...rest } = this.props;
-    console.log(this.props);
     return (
       <Route
         {...rest}
