@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import trainees from './data/trainee';
+import { Table } from '../../components';
 
 const styles = (theme) => ({
   main: {
@@ -51,6 +52,20 @@ class TraineeList extends Component {
             Add Trainee List
           </Button>
         </div>
+        <Table
+          data={trainees}
+          column={[
+            {
+              field: 'name',
+              label: 'Name',
+              align: 'center',
+            },
+            {
+              field: 'email',
+              label: 'Email Address',
+            },
+          ]}
+        />
         { this.renderTrainees() }
       </>
     );
