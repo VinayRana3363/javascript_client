@@ -72,9 +72,9 @@ class AddDialog extends Component {
   };
 
   handleClose = () => {
-    const { name, email, password } = this.state;
+    // const { name, email, password } = this.state;
     this.setState(this.baseState);
-    console.log({ name, email, password });
+    // console.log({ name, email, password });
   };
 
   handleNameChange = async (field, touchField) => {
@@ -154,7 +154,7 @@ class AddDialog extends Component {
       <form noValidate autoComplete="off">
         <div>
           <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
-            <b>Add Trainee</b>
+            <b>Add Trainee List</b>
           </Button>
           <Dialog open={open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title"><b>Add Trainee</b></DialogTitle>
