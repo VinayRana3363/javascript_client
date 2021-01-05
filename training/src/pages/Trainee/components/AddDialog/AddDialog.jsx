@@ -14,6 +14,7 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import { withStyles } from '@material-ui/core/styles';
 import * as yup from 'yup';
 import PropTypes from 'prop-types';
+import { SnackBarContext } from '../../../../contexts';
 
 const styles = (theme) => ({
   root: {
@@ -35,8 +36,19 @@ class AddDialog extends Component {
   schema = yup.object().shape({
     name: yup.string().required(),
     email: yup.string().required(),
-    password: yup.string().required().min(8),
-    confirmPassword: yup.string().required().min(8),
+    password: yup
+      .string()
+      .required()
+      .matches(
+        /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8}/,
+        'Must contain 8 characters atleast 1 uppercase letter, 1 lowercase and 1 number',
+      )
+      .label('Password'),
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref('password'), null], 'Must match Password')
+      .required()
+      .label('Confirm Password'),
   });
 
   constructor(props) {
@@ -72,9 +84,12 @@ class AddDialog extends Component {
   };
 
   handleClose = () => {
-    // const { name, email, password } = this.state;
     this.setState(this.baseState);
-    // console.log({ name, email, password });
+  };
+
+  onSubmit = (event, value) => {
+    value('Successfully added!', 'success');
+    this.setState(this.baseState);
   };
 
   handleNameChange = async (field, touchField) => {
@@ -151,117 +166,121 @@ class AddDialog extends Component {
     // eslint-disable-next-line react/destructuring-assignment
     } = this.state.touched;
     return (
-      <form noValidate autoComplete="off">
-        <div>
-          <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
-            <b>Add Trainee List</b>
-          </Button>
-          <Dialog open={open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title"><b>Add Trainee</b></DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                Enter Trainee Details
-              </DialogContentText>
-              <div>
-                <TextField
-                  id="outlined-helperText"
-                  label="Name"
-                  value={name}
-                  placeholder="Enter Trainee Name"
-                  variant="outlined"
-                  margin="dense"
-                  helperText={touchedName ? 'Name is Required' : ' '}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <AccountCircle />
-                      </InputAdornment>
-                    ),
-                  }}
-                  onChange={() => this.handleNameChange('name', 'touchedName')}
-                  onBlur={() => this.isTouched('name', 'touchedName')}
-                  error={touchedName}
-                  fullWidth
-                />
-              </div>
-              <div>
-                <TextField
-                  id="outlined-helperText"
-                  label="Email"
-                  value={email}
-                  placeholder="Enter Trainee Email"
-                  variant="outlined"
-                  margin="dense"
-                  type="email"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <MailIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                  onChange={() => this.handleNameChange('email', 'touchedEmail')}
-                  onBlur={() => this.isTouched('email', 'touchedEmail')}
-                  error={touchedEmail}
-                  // eslint-disable-next-line no-nested-ternary
-                  helperText={touchedEmail ? (email === '' ? 'Email is Required' : 'Enter the valid Email') : ' '}
-                  fullWidth
-                />
-              </div>
-              <div className={classes.password}>
-                <TextField
-                  id="outlined-helperText"
-                  label="Password"
-                  value={password}
-                  variant="outlined"
-                  type="password"
-                  margin="dense"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <VisibilityOffIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                  onChange={() => this.handleNameChange('password', 'touchedPassword')}
-                  onBlur={() => this.isTouched('password', 'touchedPassword')}
-                  error={touchedPassword}
-                  // eslint-disable-next-line no-nested-ternary
-                  helperText={touchedPassword ? (password === '' ? 'Password is Required' : <p className={classes.error}>Password must contains 1 lowercase,1 uppercase,1 numeric,at least one special character and minimum 8 character</p>) : ' '}
-                />
-                <TextField
-                  id="outlined-helperText"
-                  label="Confirm Password"
-                  value={confirmPassword}
-                  variant="outlined"
-                  type="password"
-                  margin="dense"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <VisibilityOffIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                  onChange={() => this.handleNameChange('confirmPassword', 'touchedConfirmPassword')}
-                  onBlur={() => this.isTouched('confirmPassword', 'touchedConfirmPassword')}
-                  error={touchedConfirmPassword}
-                  // eslint-disable-next-line no-nested-ternary
-                  helperText={touchedConfirmPassword ? (confirmPassword === '' ? 'Confirm Password is Required' : ((confirmPassword !== password) ? 'Confirm Password not match with Password' : ' ')) : ' '}
-                />
-              </div>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={this.handleClose} color="secondary">
-                Cancel
+      <SnackBarContext.Consumer>
+        {(value) => (
+          <form noValidate autoComplete="off">
+            <div>
+              <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
+                <b>Add Trainee List</b>
               </Button>
-              <Button onClick={this.handleClose} color="primary" disabled={this.handleButtonDisbale()}>
-                Submit
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </div>
-      </form>
+              <Dialog open={open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title"><b>Add Trainee</b></DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    Enter Trainee Details
+                  </DialogContentText>
+                  <div>
+                    <TextField
+                      id="name"
+                      label="Name"
+                      value={name}
+                      placeholder="Enter Trainee Name"
+                      variant="outlined"
+                      margin="dense"
+                      helperText={touchedName ? 'Name is Required' : ' '}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <AccountCircle />
+                          </InputAdornment>
+                        ),
+                      }}
+                      onChange={() => this.handleNameChange('name', 'touchedName')}
+                      onBlur={() => this.isTouched('name', 'touchedName')}
+                      error={touchedName}
+                      fullWidth
+                    />
+                  </div>
+                  <div>
+                    <TextField
+                      id="email"
+                      label="Email"
+                      value={email}
+                      placeholder="Enter Trainee Email"
+                      variant="outlined"
+                      margin="dense"
+                      type="email"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <MailIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                      onChange={() => this.handleNameChange('email', 'touchedEmail')}
+                      onBlur={() => this.isTouched('email', 'touchedEmail')}
+                      error={touchedEmail}
+                      // eslint-disable-next-line no-nested-ternary
+                      helperText={touchedEmail ? (email === '' ? 'Email is Required' : 'Enter the valid Email') : ' '}
+                      fullWidth
+                    />
+                  </div>
+                  <div className={classes.password}>
+                    <TextField
+                      id="password"
+                      label="Password"
+                      value={password}
+                      variant="outlined"
+                      type="password"
+                      margin="dense"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <VisibilityOffIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                      onChange={() => this.handleNameChange('password', 'touchedPassword')}
+                      onBlur={() => this.isTouched('password', 'touchedPassword')}
+                      error={touchedPassword}
+                      // eslint-disable-next-line no-nested-ternary
+                      helperText={touchedPassword ? (password === '' ? 'Password is Required' : <div><p className={classes.error}>Password must contains 1 lowercase,1 uppercase,1 numeric,at least one special character and minimum 8 character</p></div>) : ' '}
+                    />
+                    <TextField
+                      id="confirmPassword"
+                      label="Confirm Password"
+                      value={confirmPassword}
+                      variant="outlined"
+                      type="password"
+                      margin="dense"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <VisibilityOffIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                      onChange={() => this.handleNameChange('confirmPassword', 'touchedConfirmPassword')}
+                      onBlur={() => this.isTouched('confirmPassword', 'touchedConfirmPassword')}
+                      error={touchedConfirmPassword}
+                      // eslint-disable-next-line no-nested-ternary
+                      helperText={touchedConfirmPassword ? (confirmPassword === '' ? 'Confirm Password is Required' : ((confirmPassword !== password) ? 'Confirm Password not match with Password' : ' ')) : ' '}
+                    />
+                  </div>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={this.handleClose} color="secondary">
+                    Cancel
+                  </Button>
+                  <Button onClick={(event) => this.onSubmit(event, value)} color="primary" disabled={this.handleButtonDisbale()}>
+                    Submit
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            </div>
+          </form>
+        )}
+      </SnackBarContext.Consumer>
     );
   }
 }

@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import {
   BrowserRouter as Router, Route, Redirect, Switch,
 } from 'react-router-dom';
-import { ThemeProvider } from '@material-ui/core';
-import themeStyle from './theme';
+// import { ThemeProvider } from '@material-ui/core';
+import CssBaseline from '@material-ui/core/CssBaseline';
+// import themeStyle from './theme';
 import {
   Login, TextFieldDemo, Trainee, InputDemo, ChildrenDemo, NoMatch,
 } from './pages';
 import { AuthRoute, PrivateRoute } from './routes';
 import { NavBar } from './layouts';
+import { SnackBarProvider } from './contexts';
 
 class App extends Component {
   constructor(props) {
@@ -18,7 +20,8 @@ class App extends Component {
 
   render() {
     return (
-      <ThemeProvider theme={themeStyle}>
+      <SnackBarProvider>
+        <CssBaseline />
         <Router>
           <Switch>
             <Route exact path="/">
@@ -36,7 +39,7 @@ class App extends Component {
             </Route>
           </Switch>
         </Router>
-      </ThemeProvider>
+      </SnackBarProvider>
     );
   }
 }
