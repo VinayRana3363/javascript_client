@@ -43,7 +43,7 @@ export default class SnackBarProvider extends Component {
     super(props);
     this.state = {
       open: false,
-      status: '',
+      status: undefined,
       message: '',
     };
   }
@@ -69,12 +69,16 @@ export default class SnackBarProvider extends Component {
         <SnackBarContext.Provider value={this.openSnackBar}>
           {children}
         </SnackBarContext.Provider>
-        <CustomizedSnackbars
-          message={message}
-          status={status}
-          onClose={this.closeSnackBar}
-          open={open}
-        />
+        {
+          status && (
+            <CustomizedSnackbars
+              message={message}
+              status={status}
+              onClose={this.closeSnackBar}
+              open={open}
+            />
+          )
+        }
       </>
     );
   }

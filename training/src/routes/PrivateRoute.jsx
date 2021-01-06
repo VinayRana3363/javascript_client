@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { PrivateLayout } from '../layouts';
 
@@ -12,16 +12,19 @@ class PrivateRoute extends Component {
 
   render() {
     const { component: Page, ...rest } = this.props;
-    return (
-      <Route
-        {...rest}
-        render={(matchProps) => (
-          <PrivateLayout>
-            <Page {...matchProps} />
-          </PrivateLayout>
-        )}
-      />
-    );
+    if (localStorage.getItem('token')) {
+      return (
+        <Route
+          {...rest}
+          render={(matchProps) => (
+            <PrivateLayout>
+              <Page {...matchProps} />
+            </PrivateLayout>
+          )}
+        />
+      );
+    }
+    return <Redirect to="/login" />;
   }
 }
 
