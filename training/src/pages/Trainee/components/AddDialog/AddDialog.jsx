@@ -244,7 +244,7 @@ class AddDialog extends Component {
                       onBlur={() => this.isTouched('password', 'touchedPassword')}
                       error={touchedPassword}
                       // eslint-disable-next-line no-nested-ternary
-                      helperText={touchedPassword ? (password === '' ? 'Password is Required' : <div><p className={classes.error}>Password must contains 1 lowercase,1 uppercase,1 numeric,at least one special character and minimum 8 character</p></div>) : ' '}
+                      helperText={touchedPassword ? (password === '' ? 'Password is Required' : 'Password must be AlphaNumeric and min 8 character') : ' '}
                     />
                     <TextField
                       id="confirmPassword"

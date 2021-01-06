@@ -25,6 +25,8 @@ class NavBar extends Component {
     this.state = {};
   }
 
+  removeToken = () => localStorage.removeItem('token');
+
   render() {
     const { classes } = this.props;
 
@@ -39,7 +41,7 @@ class NavBar extends Component {
             <Button component={Link} to="/text-field-demo" color="inherit">TEXTFIELD DEMO</Button>
             <Button component={Link} to="/input-demo" color="inherit">INPUT DEMO</Button>
             <Button component={Link} to="/children-demo" color="inherit">CHILDERN DEMO</Button>
-            <Button color="inherit">LOGOUT</Button>
+            <Button component={Link} to="/login" color="inherit" onClick={this.removeToken}>LOGOUT</Button>
           </Toolbar>
         </AppBar>
       </div>
