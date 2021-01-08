@@ -87,10 +87,10 @@ class BasicTable extends Component {
   }
 
   renderTableField = (tableField, columnHead, actions) => {
-    const { id } = tableField;
+    const { _id } = tableField;
     const { classes } = this.props;
     return (
-      <TableRow key={id} className={classes.root} onClick={this.handleSelect(id)}>
+      <TableRow key={_id} className={classes.root} onClick={this.handleSelect(_id)}>
         {
           columnHead.map((data) => this.accordingColumnHead(data, tableField))
         }
@@ -110,8 +110,9 @@ class BasicTable extends Component {
 
   accordingColumnHead = (data, tableField) => {
     const { field, align, format } = data;
+    const { _id } = tableField;
     return (
-      <TableCell key={`${tableField.id}+${tableField[field]}`} align={align}>{(format) ? format(tableField[field]) : tableField[field]}</TableCell>
+      <TableCell key={`${_id}+${tableField[field]}`} align={align}>{(format) ? format(tableField[field]) : tableField[field]}</TableCell>
     );
   }
 
@@ -123,7 +124,7 @@ class BasicTable extends Component {
 
   render() {
     const {
-      classes, data, column, page, onChangePage, actions,
+      classes, data, column, page, onChangePage, actions, count,
     } = this.props;
     return (
       <>
@@ -142,10 +143,10 @@ class BasicTable extends Component {
         <TablePagination
           className={classes.pagination}
           component="div"
-          count={100}
+          count={count}
           page={page}
           onChangePage={onChangePage}
-          rowsPerPage={10}
+          rowsPerPage={5}
           rowsPerPageOptions={[]}
         />
       </>
@@ -160,6 +161,7 @@ BasicTable.defaultProps = {
   onSelect: {},
   onChangePage: {},
   page: 0,
+  count: 0,
 };
 
 BasicTable.propTypes = {
@@ -172,6 +174,7 @@ BasicTable.propTypes = {
   onSort: PropTypes.func,
   onSelect: PropTypes.func,
   page: PropTypes.number,
+  count: PropTypes.number,
   onChangePage: PropTypes.func,
 };
 
