@@ -8,6 +8,9 @@ import moment from 'moment';
 import trainees from './data/trainee';
 import { Table } from '../../components';
 import { AddDialog, DeleteDialog, EditDialog } from './components';
+import callApi from '../../libs/utils/api';
+import { IsLoadingHOC } from '../../components/HOC';
+import { SnackBarContext } from '../../contexts';
 
 const styles = (theme) => ({
   main: {
@@ -23,11 +26,19 @@ class TraineeList extends Component {
       order: 'asc',
       orderBy: 'name',
       page: 0,
+      totalCount: 0,
       openDeleteDialog: false,
       deleteDialogData: null,
       openEditDialog: false,
       editDialogData: null,
+      traineesDataBase: [],
     };
+  }
+
+  componentDidMount() {
+    const { setLoading } = this.props;
+    setLoading(true);
+    this.traineesFromDataBase();
   }
 
   // eslint-disable-next-line arrow-body-style
@@ -61,6 +72,8 @@ class TraineeList extends Component {
     this.setState({
       order: newOrder,
       orderBy: field,
+    }, () => {
+      this.traineesFromDataBase();
     });
   }
 
@@ -73,8 +86,11 @@ class TraineeList extends Component {
 
   formatDate = (date) => (moment(date).format('dddd, MMMM Do, YYYY h:mm:ss A'))
 
-  handleChangePage = (event, newPage) => {
-    this.setState({ page: newPage });
+  handleChangePage = (event, newPage, value) => {
+    console.log(newPage, value);
+    this.setState({ page: newPage }, () => {
+      this.traineesFromDataBase();
+    });
   };
 
   handleEditIcon = (e, data) => {
@@ -95,67 +111,98 @@ class TraineeList extends Component {
     this.setState({ openEditDialog: false });
   }
 
+  traineesFromDataBase = async () => {
+    const { page, orderBy } = this.state;
+    const { setLoading } = this.props;
+    await callApi(`/trainee/?skip=${page * 5}&limit=${5}&sort=${orderBy}`, 'GET')
+      .then((res) => {
+        setTimeout(() => {
+          setLoading(false);
+          this.setState({ traineesDataBase: res.data.data, totalCount: res.data.TraineeCount + 1 });
+        }, 500);
+        return res.data.data;
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+        return trainees;
+      });
+  }
+
   render() {
     const { classes } = this.props;
     const {
-      order, orderBy, page, deleteDialogData, openDeleteDialog, openEditDialog, editDialogData,
+      // eslint-disable-next-line max-len
+      order, orderBy, page, deleteDialogData, openDeleteDialog, openEditDialog, editDialogData, traineesDataBase, totalCount,
     } = this.state;
+    const { currentState } = this.props;
     return (
-      <>
-        <div className={classes.main}>
-          <AddDialog />
-        </div>
-        <Table
-          data={trainees}
-          column={[
+      <SnackBarContext.Consumer>
+        {(value) => (
+          <div>
             {
-              field: 'name',
-              label: 'Name',
-            },
-            {
-              field: 'email',
-              label: 'Email Address',
-            },
-            {
-              field: 'createdAt',
-              label: 'Date',
-              align: 'right',
-              format: this.formatDate,
-            },
-          ]}
-          actions={[
-            {
-              icon: <EditIcon className={classes.icons} />,
-              handler: this.handleEditIcon,
-            },
-            {
-              icon: <DeleteIcon className={classes.icons} />,
-              handler: this.handleDeleteIcon,
-            },
-          ]}
-          order={order}
-          orderBy={orderBy}
-          onSort={this.handleSort}
-          onSelect={this.handleSelect}
-          count={100}
-          page={page}
-          onChangePage={this.handleChangePage}
-        />
-        <DeleteDialog
-          openDialog={openDeleteDialog}
-          onClose={this.handleDeleteIconClose}
-          data={deleteDialogData}
-        />
-        {
-          openEditDialog && (
-            <EditDialog
-              editOpen={openEditDialog}
-              onClose={this.handleEditIconClose}
-              details={editDialogData}
+              (!currentState) && (
+                <div>
+                  <div className={classes.main}>
+                    <AddDialog callTrainees={this.traineesFromDataBase} />
+                  </div>
+                  <Table
+                    id={value}
+                    data={traineesDataBase}
+                    column={[
+                      {
+                        field: 'name',
+                        label: 'Name',
+                      },
+                      {
+                        field: 'email',
+                        label: 'Email Address',
+                      },
+                      {
+                        field: 'createdAt',
+                        label: 'Date',
+                        align: 'right',
+                        format: this.formatDate,
+                      },
+                    ]}
+                    actions={[
+                      {
+                        icon: <EditIcon className={classes.icons} />,
+                        handler: this.handleEditIcon,
+                      },
+                      {
+                        icon: <DeleteIcon className={classes.icons} />,
+                        handler: this.handleDeleteIcon,
+                      },
+                    ]}
+                    order={order}
+                    orderBy={orderBy}
+                    onSort={this.handleSort}
+                    onSelect={this.handleSelect}
+                    count={totalCount}
+                    page={page}
+                    onChangePage={this.handleChangePage}
+                  />
+                </div>
+              )
+            }
+            <DeleteDialog
+              openDialog={openDeleteDialog}
+              onClose={this.handleDeleteIconClose}
+              data={deleteDialogData}
             />
-          )
-        }
-      </>
+            {
+              openEditDialog && (
+                <EditDialog
+                  editOpen={openEditDialog}
+                  onClose={this.handleEditIconClose}
+                  details={editDialogData}
+                />
+              )
+            }
+          </div>
+        )}
+      </SnackBarContext.Consumer>
     );
   }
 }
@@ -164,6 +211,8 @@ TraineeList.propTypes = {
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.objectOf(PropTypes.any).isRequired,
   history: PropTypes.objectOf(PropTypes.any).isRequired,
+  setLoading: PropTypes.func.isRequired,
+  currentState: PropTypes.bool.isRequired,
 };
 
-export default withStyles(styles)(TraineeList);
+export default withStyles(styles)(IsLoadingHOC(TraineeList));

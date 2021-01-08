@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import trainees from './data/trainee';
+import callApi from '../../libs/utils/api';
 import { NoMatch } from '../NoMatch';
 
 const styles = (theme) => ({
@@ -50,12 +50,31 @@ const styles = (theme) => ({
 class TraineeDetails extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      trainees: [],
+    };
+  }
+
+  componentDidMount() {
+    this.traineesFromDataBase();
   }
 
   getTrainee() {
+    const { trainees } = this.state;
     const { match: { params: { id } } } = this.props;
-    return trainees.find((item) => item.id === id);
+    // eslint-disable-next-line no-underscore-dangle
+    return trainees.find((item) => item._id === id);
+  }
+
+  traineesFromDataBase = async () => {
+    await callApi('/trainee', 'GET')
+      .then((res) => {
+        this.setState({ trainees: res.data.data });
+        return res.data.data;
+      })
+      .catch(() => {
+        this.setState({ trainees: [] });
+      });
   }
 
   render() {

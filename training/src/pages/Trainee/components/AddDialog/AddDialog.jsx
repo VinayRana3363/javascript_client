@@ -15,6 +15,7 @@ import { withStyles } from '@material-ui/core/styles';
 import * as yup from 'yup';
 import PropTypes from 'prop-types';
 import { SnackBarContext } from '../../../../contexts';
+import callApi from '../../../../libs/utils/api';
 
 const styles = (theme) => ({
   root: {
@@ -87,9 +88,27 @@ class AddDialog extends Component {
     this.setState(this.baseState);
   };
 
-  onSubmit = (event, value) => {
-    value('Successfully added!', 'success');
-    this.setState(this.baseState);
+  onSubmit = async (e, value) => {
+    e.preventDefault();
+    const { name, email, password } = this.state;
+    const { callTrainees } = this.props;
+    await callApi('/trainee', 'POST', {
+      userData: {
+        name,
+        role: 'trainee',
+        email,
+        password,
+      },
+    })
+      .then(() => {
+        value('Successfully added', 'success');
+        this.setState(this.baseState);
+        callTrainees();
+      })
+      .catch(() => {
+        value('Unable to add', 'error');
+        this.setState(this.baseState);
+      });
   };
 
   handleNameChange = async (field, touchField) => {
@@ -287,6 +306,7 @@ class AddDialog extends Component {
 
 AddDialog.propTypes = {
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
+  callTrainees: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(AddDialog);
