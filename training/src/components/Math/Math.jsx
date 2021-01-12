@@ -21,21 +21,18 @@ const Text = (props) => {
   }
   return (
     <>
-      <h6 hidden>learn react</h6>
-      <p>
-        The result of
-        {' '}
-        {first}
-        {' '}
-        {operator}
-        {' '}
-        {second}
-        {' '}
-        =
-        {' '}
-        {result}
-        {' '}
-      </p>
+      The result of
+      {' '}
+      {first}
+      {' '}
+      {operator}
+      {' '}
+      {second}
+      {' '}
+      =
+      {' '}
+      {result}
+      {' '}
     </>
   );
 };
@@ -43,10 +40,11 @@ Text.propTypes = {
   first: PropTypes.number.isRequired,
   second: PropTypes.number.isRequired,
   operator: PropTypes.string.isRequired,
-  result: PropTypes.number.isRequired,
+  result: PropTypes.number,
   children: PropTypes.func,
 };
 Text.defaultProps = {
   children: undefined,
+  result: 0,
 };
 export default Text;

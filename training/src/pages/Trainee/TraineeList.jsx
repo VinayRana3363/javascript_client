@@ -14,7 +14,7 @@ import { SnackBarContext } from '../../contexts';
 
 const styles = (theme) => ({
   main: {
-    marginTop: theme.spacing.unit * 2,
+    marginTop: theme.spacing(2),
   },
   icons: {},
 });
@@ -104,11 +104,15 @@ class TraineeList extends Component {
   }
 
   handleDeleteIconClose = () => {
-    this.setState({ openDeleteDialog: false });
+    this.setState({ openDeleteDialog: false }, () => {
+      this.traineesFromDataBase();
+    });
   }
 
   handleEditIconClose = () => {
-    this.setState({ openEditDialog: false });
+    this.setState({ openEditDialog: false }, () => {
+      this.traineesFromDataBase();
+    });
   }
 
   traineesFromDataBase = async () => {
