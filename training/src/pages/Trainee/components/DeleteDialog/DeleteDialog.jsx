@@ -5,33 +5,41 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import PropTypes from 'prop-types';
 import { SnackBarContext } from '../../../../contexts';
+import callApi from '../../../../libs/utils/api';
 
 class DeleteDialog extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      spinner: false,
     };
   }
 
-  handleDeleteClose = (event, value) => {
+  handleDeleteClose = async (event, value) => {
     event.preventDefault();
     const { data, onClose } = this.props;
-    const originalDate = new Date(data.createdAt);
-    const dateCheck = new Date('2019-02-14');
-    if (originalDate > dateCheck) {
-      // eslint-disable-next-line no-console
-      console.log('Deleted Item', data);
-      value('Successfully Deleted!', 'success');
-    } else {
-      value("Can't Delete!", 'error');
-    }
-    onClose();
+    const { originalId } = data;
+    this.setState({ spinner: true });
+    await callApi(`/trainee/${originalId}`, 'DELETE')
+      .then(() => {
+        setTimeout(() => {
+          this.setState({ spinner: false });
+          value('Successfully Deleted!', 'success');
+          onClose();
+        }, 500);
+      })
+      .catch(() => {
+        this.setState({ spinner: false });
+        value("Can't Delete!", 'error');
+      });
   };
 
   render() {
     const { openDialog, onClose } = this.props;
+    const { spinner } = this.state;
     return (
       <SnackBarContext.Consumer>
         {(value) => (
@@ -53,7 +61,14 @@ class DeleteDialog extends Component {
                 Cancel
               </Button>
               <Button onClick={(event) => this.handleDeleteClose(event, value)} color="primary">
-                Delete
+                {!spinner && ('Delete')}
+                {
+                  spinner && (
+                    <div>
+                      <CircularProgress color="secondary" />
+                    </div>
+                  )
+                }
               </Button>
             </DialogActions>
           </Dialog>
@@ -71,7 +86,7 @@ DeleteDialog.defaultProps = {
 
 DeleteDialog.propTypes = {
   openDialog: PropTypes.bool,
-  data: PropTypes.objectOf(PropTypes.string),
+  data: PropTypes.objectOf(PropTypes.any),
   onClose: PropTypes.func,
 };
 

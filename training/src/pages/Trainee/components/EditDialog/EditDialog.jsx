@@ -15,6 +15,8 @@ import {
 } from "@material-ui/core";
 
 import { Email, Person } from "@material-ui/icons";
+import CircularProgress from '@material-ui/core/CircularProgress';
+import callApi from '../../../../libs/utils/api';
 import { SnackBarContext } from '../../../../contexts';
 
 class EditDialog extends Component {
@@ -28,6 +30,7 @@ class EditDialog extends Component {
     this.state = {
       name: "",
       email: "",
+      spinner: false,
       touched: {
         name: false,
         email: false,
@@ -133,15 +136,35 @@ class EditDialog extends Component {
     });
   };
 
-  onSubmit = (event, value) => {
-    const { onClose } = this.props;
-    this.onConsole();
-    value('Successfully Edited!', 'success');
-    onClose();
+  onSubmit = async (event, value) => {
+    const { onClose, details } = this.props;
+    const { name, email } = this.state;
+    this.setState({ spinner: true });
+    await callApi('/trainee', 'PUT', {
+      originalId: details.originalId,
+      dataToUpdate: {
+        name,
+        role: "trainee",
+        email,
+      },
+    })
+      .then(() => {
+        setTimeout(() => {
+          this.setState({ spinner: false });
+          this.onConsole();
+          value('Successfully Edited!', 'success');
+          onClose();
+        }, 500);
+      })
+      .catch(() => {
+        value('Unable to edit', 'error');
+        onClose();
+      });
   };
 
   render() {
     const { editOpen, onClose, details } = this.props;
+    const { spinner } = this.state;
     return (
       <SnackBarContext.Consumer>
         {(value) => (
@@ -202,7 +225,14 @@ class EditDialog extends Component {
                 onClick={(event) => this.onSubmit(event, value)}
                 disabled={!this.handleButtonError()}
               >
-                Submit
+                {!spinner && ('Submit')}
+                {
+                  spinner && (
+                    <div>
+                      <CircularProgress color="secondary" />
+                    </div>
+                  )
+                }
               </Button>
             </DialogActions>
           </Dialog>
