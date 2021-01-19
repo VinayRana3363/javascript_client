@@ -34,22 +34,16 @@ class InputDemo extends Component {
   }
 
   handleNameChange = (e) => {
-    this.setState({ name: e.target.value, isTouchedName: false }, () => {
-      console.log(this.state);
-    });
+    this.setState({ name: e.target.value, isTouchedName: false });
   }
 
   handleSportChange = (e) => {
     if (e.target.value !== 'select') {
       this.setState({
         sport: e.target.value, Cricket: '', Football: '', gameOptions: Sport[e.target.value], isTouchedSport: false,
-      }, () => {
-        console.log(this.state);
       });
     } else {
-      this.setState({ sport: '' }, () => {
-        console.log(this.state);
-      });
+      this.setState({ sport: '' });
     }
   }
 
@@ -58,13 +52,9 @@ class InputDemo extends Component {
     Object.keys(Sport).forEach(
       (key) => {
         if (key === sport) {
-          this.setState({ [key]: e.target.value }, () => {
-            console.log(this.state);
-          });
+          this.setState({ [key]: e.target.value });
         } else {
-          this.setState({ [key]: '' }, () => {
-            console.log(this.state);
-          });
+          this.setState({ [key]: '' });
         }
       },
     );
@@ -115,7 +105,7 @@ class InputDemo extends Component {
           (isTouchedName) ? (
             <Error>Name Field is Required </Error>
           )
-            : console.log(this.state)
+            : ''
         }
         <div><p><b>Select the game you play</b></p></div>
         <SelectField
@@ -130,7 +120,7 @@ class InputDemo extends Component {
           (isTouchedSport) ? (
             <Error>Sport Field is Required </Error>
           )
-            : console.log(this.state)
+            : ''
         }
         {
           (sport !== '')
@@ -152,7 +142,7 @@ class InputDemo extends Component {
                       <Error>What you do is Required  Field</Error>
                     </div>
                   )
-                    : console.log('After name', name)
+                    : ''
                 }
               </>
             )
@@ -160,12 +150,10 @@ class InputDemo extends Component {
         }
         <Button
           value="Submit"
-          onClick={() => { console.log('Button clicked'); }}
           disabled={this.handleButtonDisbale()}
         />
         <Button
           value="Cancel"
-          onClick={() => { console.log('Button clicked cancel'); }}
           disabled={false}
         />
       </div>

@@ -41,16 +41,13 @@ class TraineeList extends Component {
     this.traineesFromDataBase();
   }
 
-  // eslint-disable-next-line arrow-body-style
-  renderTrainees = () => {
-    return (
-      <ul>
-        {
-          trainees.map((trainee) => this.renderTrainee(trainee))
-        }
-      </ul>
-    );
-  }
+  renderTrainees = () => (
+    <ul>
+      {
+        trainees.map((trainee) => this.renderTrainee(trainee))
+      }
+    </ul>
+  )
 
   renderTrainee = (trainee) => {
     const { match } = this.props;
@@ -86,8 +83,7 @@ class TraineeList extends Component {
 
   formatDate = (date) => (moment(date).format('dddd, MMMM Do, YYYY h:mm:ss A'))
 
-  handleChangePage = (event, newPage, value) => {
-    console.log(newPage, value);
+  handleChangePage = (event, newPage) => {
     this.setState({ page: newPage }, () => {
       this.traineesFromDataBase();
     });

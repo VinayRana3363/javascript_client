@@ -90,8 +90,6 @@ class Login extends Component {
 
   handleNameChange = async (e, field, touchField) => {
     const { touched } = this.state;
-    // eslint-disable-next-line no-restricted-globals
-    // eslint-disable-next-line max-len
     await this.setState({ [field]: e.target.value, touched: { ...touched, [touchField]: false } });
     if (field === 'email') {
       this.validateEmail();
@@ -176,7 +174,6 @@ class Login extends Component {
                   onChange={(e) => this.handleNameChange(e, 'password', 'touchedPassword')}
                   onBlur={() => this.isTouched('password', 'touchedPassword')}
                   error={touchedPassword}
-                  // eslint-disable-next-line no-nested-ternary
                   helperText={touchedPassword ? 'Password is Required' : ' '}
                 />
                 <Button

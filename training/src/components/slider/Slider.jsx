@@ -14,14 +14,12 @@ class Slider extends Component {
 
   componentDidMount() {
     const { banners, duration, random } = this.props;
-    console.log('inside did mount', banners);
     let currentImageIndex = 0;
     let currentImage;
     this.id = setInterval(() => {
       if (random) currentImage = banners[getRandomNumber(banners.length)];
       else {
         currentImageIndex = getNextRoundRobin(banners.length, currentImageIndex);
-        console.log(currentImageIndex);
         currentImage = banners[currentImageIndex];
       }
       this.setState({
@@ -31,7 +29,6 @@ class Slider extends Component {
   }
 
   componentWillUnmount() {
-    console.log('inside will unmount');
     clearInterval(this.id);
   }
 
