@@ -122,9 +122,6 @@ class EditDialog extends Component {
   };
 
   onConsole = () => {
-    const { name, email } = this.state;
-    // eslint-disable-next-line no-console
-    console.log("Edited Item", { name, email });
     this.setState({
       buttonEnable: false,
       name: "",

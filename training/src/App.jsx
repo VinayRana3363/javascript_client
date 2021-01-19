@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import {
   BrowserRouter as Router, Route, Redirect, Switch,
 } from 'react-router-dom';
-// import { ThemeProvider } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
-// import themeStyle from './theme';
 import {
   Login, TextFieldDemo, Trainee, InputDemo, ChildrenDemo, NoMatch,
 } from './pages';

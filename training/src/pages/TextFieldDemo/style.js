@@ -5,7 +5,6 @@ border: 1px solid black;
 padding: 2px;
 margin: 5%;
 `;
-// console.log('inside style', this);
 const Input = styled.input`
 width: 99%;
 height: 32px;

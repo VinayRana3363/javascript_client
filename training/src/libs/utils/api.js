@@ -1,7 +1,7 @@
 import axios from 'axios';
+import { BASE_URL } from '../../config/constants';
 
 const callApi = async (route, method, body) => {
-  const BASE_URL = 'http://localhost:9000/api';
   const headers = {
     'Content-Type': 'application/json',
     Authorization: localStorage.getItem('token'),

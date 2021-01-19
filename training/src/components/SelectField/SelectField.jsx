@@ -22,9 +22,8 @@ class SelectField extends Component {
 
   render() {
     const {
-      value, onChange, error, defaultText, onBlur,
+      onChange, onBlur,
     } = this.props;
-    console.log('inside SelectField', value, error, defaultText);
     return (
       <>
         <Select onChange={onChange} onBlur={onBlur}>
@@ -36,18 +35,14 @@ class SelectField extends Component {
 }
 
 SelectField.defaultProps = {
-  error: '',
   options: [],
-  defaultText: 'select',
 };
 
 SelectField.propTypes = {
   value: PropTypes.string.isRequired,
   options: PropTypes.arrayOf(PropTypes.object),
-  error: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   onBlur: PropTypes.func.isRequired,
-  defaultText: PropTypes.string,
 };
 
 export default SelectField;

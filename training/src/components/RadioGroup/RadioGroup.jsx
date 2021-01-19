@@ -26,9 +26,8 @@ class RadioGroup extends Component {
 
   render() {
     const {
-      value, onChange, error,
+      onChange,
     } = this.props;
-    console.log('inside RadioGroup', value, error);
     return (
       <>
         <Input onChange={onChange}>
@@ -40,14 +39,12 @@ class RadioGroup extends Component {
 }
 
 RadioGroup.defaultProps = {
-  error: '',
   options: [],
 };
 
 RadioGroup.propTypes = {
   value: PropTypes.string.isRequired,
   options: PropTypes.arrayOf(PropTypes.object),
-  error: PropTypes.string,
   onChange: PropTypes.func.isRequired,
 };
 
