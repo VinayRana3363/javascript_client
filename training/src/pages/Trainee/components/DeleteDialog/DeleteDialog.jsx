@@ -33,6 +33,7 @@ class DeleteDialog extends Component {
       })
       .catch(() => {
         this.setState({ spinner: false });
+        onClose();
         value("Can't Delete!", 'error');
       });
   };

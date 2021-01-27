@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,7 +13,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import PropTypes from 'prop-types';
 import * as yup from 'yup';
 import { SnackBarContext } from '../../contexts';
-import callApi from '../../libs/utils/api';
+// import callApi from '../../libs/utils/api';
 
 const styles = (theme) => ({
   paper: {
@@ -72,17 +73,20 @@ class Login extends Component {
 
   onSubmit = async (e, value) => {
     e.preventDefault();
-    const { history } = this.props;
+    const { history, loginUser } = this.props;
     const { email, password } = this.state;
     this.setState({ spinner: true });
-    await callApi('/user/login', 'POST', { email, password })
+    await loginUser({ variables: { email, password } })
       .then((res) => {
-        localStorage.setItem('token', res.data.Token);
+        console.log('11111111111', res);
+
+        localStorage.setItem('token', res.data.loginUser);
         value('Successfully logged', 'success');
         this.setState({ spinner: false });
         history.push('/trainee');
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log('22222', err);
         value('Invalid credentials', 'error');
         this.setState(this.baseState);
       });
@@ -206,6 +210,7 @@ class Login extends Component {
 Login.propTypes = {
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
   history: PropTypes.objectOf(PropTypes.any).isRequired,
+  loginUser: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(Login);
+export default withRouter(withStyles(styles)(Login));
