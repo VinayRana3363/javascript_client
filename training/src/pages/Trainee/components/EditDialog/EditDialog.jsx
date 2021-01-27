@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable quotes */
 import React, { Component } from "react";
 import PropTypes from "prop-types";
@@ -28,8 +29,8 @@ class EditDialog extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: "",
-      email: "",
+      name: this.props.details.name,
+      email: this.props.details.email,
       spinner: false,
       touched: {
         name: false,

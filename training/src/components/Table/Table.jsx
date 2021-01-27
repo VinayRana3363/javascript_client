@@ -10,6 +10,7 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
 import PropTypes from 'prop-types';
+import { SnackBarContext } from '../../contexts';
 
 const styles = (theme) => ({
   table: {
@@ -53,9 +54,9 @@ class BasicTable extends Component {
     </>
   )
 
-  columnField = (columnData, columnHead, actions) => (
+  columnField = (columnData, columnHead, actions, value) => (
     <>
-      {columnData.map((tableData) => this.renderTableField(tableData, columnHead, actions))}
+      {columnData.map((tableData) => this.renderTableField(tableData, columnHead, actions, value))}
     </>
   )
 
@@ -86,7 +87,7 @@ class BasicTable extends Component {
     );
   }
 
-  renderTableField = (tableField, columnHead, actions) => {
+  renderTableField = (tableField, columnHead, actions, value) => {
     const { _id } = tableField;
     const { classes } = this.props;
     return (
@@ -95,7 +96,7 @@ class BasicTable extends Component {
           columnHead.map((data) => this.accordingColumnHead(data, tableField))
         }
         {
-          actions.map((data) => this.handleIcons(data, tableField))
+          actions.map((data) => this.handleIcons(data, tableField, value))
         }
       </TableRow>
 
@@ -116,8 +117,8 @@ class BasicTable extends Component {
     );
   }
 
-  handleIcons = (data, tableField) => (
-    <TableCell key={Math.random()} onClick={(e) => data.handler(e, tableField)}>
+  handleIcons = (data, tableField, value) => (
+    <TableCell key={Math.random()} onClick={(e) => data.handler(e, tableField, value)}>
       {data.icon}
     </TableCell>
   )
@@ -127,29 +128,33 @@ class BasicTable extends Component {
       classes, data, column, page, onChangePage, actions, count,
     } = this.props;
     return (
-      <>
-        <TableContainer component={Paper} className={classes.container}>
-          <Table className={classes.table} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                { this.columnHead(column)}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              { this.columnField(data, column, actions)}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          className={classes.pagination}
-          component="div"
-          count={count}
-          page={page}
-          onChangePage={onChangePage}
-          rowsPerPage={5}
-          rowsPerPageOptions={[]}
-        />
-      </>
+      <SnackBarContext.Consumer>
+        {(value) => (
+          <>
+            <TableContainer component={Paper} className={classes.container}>
+              <Table className={classes.table} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    { this.columnHead(column)}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  { this.columnField(data, column, actions, value)}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              className={classes.pagination}
+              component="div"
+              count={count}
+              page={page}
+              onChangePage={onChangePage}
+              rowsPerPage={5}
+              rowsPerPageOptions={[]}
+            />
+          </>
+        )}
+      </SnackBarContext.Consumer>
     );
   }
 }

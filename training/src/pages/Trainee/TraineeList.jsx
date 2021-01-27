@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
@@ -39,6 +40,18 @@ class TraineeList extends Component {
     const { setLoading } = this.props;
     setLoading(true);
     this.traineesFromDataBase();
+  }
+
+  selfCheck = async (value) => {
+    const { deleteDialogData } = this.state;
+    const { originalId } = deleteDialogData;
+    await callApi('/user/me', 'GET')
+      .then((res) => {
+        if (res.data.user.originalId === originalId) {
+          this.handleDeleteIconClose();
+          value("Can't Delete your self", 'error');
+        }
+      });
   }
 
   renderTrainees = () => (
@@ -94,9 +107,11 @@ class TraineeList extends Component {
     this.setState({ openEditDialog: true, editDialogData: data });
   }
 
-  handleDeleteIcon = (e, data) => {
+  handleDeleteIcon = (e, data, value) => {
     e.stopPropagation();
-    this.setState({ openDeleteDialog: true, deleteDialogData: data });
+    this.setState({ openDeleteDialog: true, deleteDialogData: data }, () => {
+      this.selfCheck(value);
+    });
   }
 
   handleDeleteIconClose = () => {
@@ -116,6 +131,11 @@ class TraineeList extends Component {
     const { setLoading } = this.props;
     await callApi(`/trainee/?skip=${page * 5}&limit=${5}&sort=${orderBy}`, 'GET')
       .then((res) => {
+        if (res.data.data.length === 0) {
+          this.setState({ page: page - 1 }, () => {
+            this.traineesFromDataBase();
+          });
+        }
         setTimeout(() => {
           setLoading(false);
           this.setState({ traineesDataBase: res.data.data, totalCount: res.data.TraineeCount + 1 });
