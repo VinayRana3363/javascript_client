@@ -1,27 +1,23 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
   BrowserRouter as Router, Route, Redirect, Switch,
 } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ApolloProvider } from '@apollo/react-components';
 import {
-  Login, TextFieldDemo, Trainee, InputDemo, ChildrenDemo, NoMatch,
+  Login, TextFieldDemo, InputDemo, ChildrenDemo, NoMatch, Trainee,
 } from './pages';
+// import { TraineeList } from './pages/Trainee';
 import { AuthRoute, PrivateRoute } from './routes';
 import { NavBar } from './layouts';
 import { SnackBarProvider } from './contexts';
-import Apolloclient from './libs/apollo-client';
+import apolloClient from './libs/apollo-client';
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
-  render() {
-    return (
+function App() {
+  return (
+    <>
       <SnackBarProvider>
-        <ApolloProvider client={Apolloclient}>
+        <ApolloProvider client={apolloClient}>
           <CssBaseline />
           <Router>
             <Switch>
@@ -42,8 +38,8 @@ class App extends Component {
           </Router>
         </ApolloProvider>
       </SnackBarProvider>
-    );
-  }
+    </>
+  );
 }
 
 export default App;
