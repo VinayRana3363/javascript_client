@@ -78,15 +78,12 @@ class Login extends Component {
     this.setState({ spinner: true });
     await loginUser({ variables: { email, password } })
       .then((res) => {
-        console.log('11111111111', res);
-
         localStorage.setItem('token', res.data.loginUser);
         value('Successfully logged', 'success');
         this.setState({ spinner: false });
         history.push('/trainee');
       })
-      .catch((err) => {
-        console.log('22222', err);
+      .catch(() => {
         value('Invalid credentials', 'error');
         this.setState(this.baseState);
       });
