@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -61,8 +62,8 @@ class BasicTable extends Component {
   )
 
   handleSort = (field) => () => {
-    const { onSort } = this.props;
-    onSort(field);
+    const { onSort, refetchQueries } = this.props;
+    onSort(field, refetchQueries);
   }
 
   handleSelect = (id) => () => {
