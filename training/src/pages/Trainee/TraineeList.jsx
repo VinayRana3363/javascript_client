@@ -1,10 +1,10 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prop-types */
 /* eslint-disable max-len */
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { graphql } from '@apollo/client/react/hoc';
 import { flowRight as compose } from 'lodash';
-// import { withStyles } from '@material-ui/core/styles';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import PropTypes from 'prop-types';
@@ -17,13 +17,6 @@ import { IsLoadingHOC } from '../../components/HOC';
 import { SnackBarContext } from '../../contexts';
 import { STORED_USERS } from './query';
 
-// const styles = (theme) => ({
-//   main: {
-//     marginTop: theme.spacing(2),
-//   },
-//   icons: {},
-// });
-
 class TraineeList extends Component {
   constructor(props) {
     super(props);
@@ -31,19 +24,16 @@ class TraineeList extends Component {
       order: 'asc',
       orderBy: 'name',
       page: 0,
-      // totalCount: 0,
       openDeleteDialog: false,
       deleteDialogData: null,
       openEditDialog: false,
       editDialogData: null,
-      // traineesDataBase: trainees,
     };
   }
 
   componentDidMount() {
     const { setLoading } = this.props;
     setLoading(true);
-    this.traineesFromDataBase();
   }
 
   selfCheck = async (value) => {
@@ -77,8 +67,8 @@ class TraineeList extends Component {
     );
   }
 
-  handleSort = (field) => {
-    const { order, orderBy } = this.state;
+  handleSort = (field, refetch) => {
+    const { order, orderBy, page } = this.state;
     let newOrder = 'asc';
     if (orderBy === field && order === 'asc') {
       newOrder = 'desc';
@@ -87,7 +77,7 @@ class TraineeList extends Component {
       order: newOrder,
       orderBy: field,
     }, () => {
-      this.traineesFromDataBase();
+      refetch({ skip: String(page * 5), limit: String(5), sort: this.state.orderBy });
     });
   }
 
@@ -102,7 +92,7 @@ class TraineeList extends Component {
 
   handleChangePage = (refetch) => (event, newPage) => {
     this.setState({ page: newPage }, () => {
-      refetch({ skip: String(newPage * 5), limit: String(5) });
+      refetch({ skip: String(newPage * 5), limit: String(5), sort: this.state.orderBy });
     });
   };
 
@@ -118,39 +108,19 @@ class TraineeList extends Component {
     });
   }
 
-  handleDeleteIconClose = () => {
+  handleDeleteIconClose = (data, refetch) => {
+    const { page } = this.state;
     this.setState({ openDeleteDialog: false }, () => {
-      this.traineesFromDataBase();
+      if (data.length === 1) {
+        this.setState({ page: page - 1 }, () => {
+          refetch({ skip: String((page - 1) * 5), limit: String(5), sort: this.state.orderBy });
+        });
+      } else refetch();
     });
   }
 
   handleEditIconClose = () => {
-    this.setState({ openEditDialog: false }, () => {
-      this.traineesFromDataBase();
-    });
-  }
-
-  traineesFromDataBase = async () => {
-    // const { page, orderBy } = this.state;
-    // const { setLoading } = this.props;
-    // await callApi(`/trainee/?skip=${page * 5}&limit=${5}&sort=${orderBy}`, 'GET')
-    //   .then((res) => {
-    //     if (res.data.data.length === 0) {
-    //       this.setState({ page: page - 1 }, () => {
-    //         this.traineesFromDataBase();
-    //       });
-    //     }
-    //     setTimeout(() => {
-    //       setLoading(false);
-    //       this.setState({ traineesDataBase: res.data.data, totalCount: res.data.TraineeCount + 1 });
-    //     }, 500);
-    //     return res.data.data;
-    //   })
-    //   .catch((err) => {
-    //     setLoading(false);
-    //     console.log(err);
-    //     return trainees;
-    //   });
+    this.setState({ openEditDialog: false });
   }
 
   render() {
@@ -182,7 +152,7 @@ class TraineeList extends Component {
               (!currentState && data.length > 0) && (
                 <div>
                   <div className={classes}>
-                    <AddDialog callTrainees={refetch} />
+                    <AddDialog refetchQueries={refetch} />
                   </div>
                   <Table
                     id={value}
@@ -216,6 +186,7 @@ class TraineeList extends Component {
                     order={order}
                     orderBy={orderBy}
                     onSort={this.handleSort}
+                    refetchQueries={refetch}
                     onSelect={this.handleSelect}
                     // eslint-disable-next-line radix
                     count={parseInt(TraineeCount) + 1}
@@ -227,8 +198,9 @@ class TraineeList extends Component {
             }
             <DeleteDialog
               openDialog={openDeleteDialog}
-              onClose={this.handleDeleteIconClose}
+              onClose={() => this.handleDeleteIconClose(data, refetch)}
               data={deleteDialogData}
+              refetchQueries={refetch}
             />
             {
               openEditDialog && (
@@ -236,6 +208,7 @@ class TraineeList extends Component {
                   editOpen={openEditDialog}
                   onClose={this.handleEditIconClose}
                   details={editDialogData}
+                  refetchQueries={refetch}
                 />
               )
             }
@@ -252,8 +225,6 @@ TraineeList.propTypes = {
   setLoading: PropTypes.func.isRequired,
   currentState: PropTypes.bool.isRequired,
 };
-
-// export default withStyles(styles)(IsLoadingHOC(TraineeList));
 
 export default compose(IsLoadingHOC, graphql(STORED_USERS,
   {

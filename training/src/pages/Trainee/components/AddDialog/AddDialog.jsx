@@ -15,7 +15,6 @@ import { withStyles } from '@material-ui/core/styles';
 import * as yup from 'yup';
 import PropTypes from 'prop-types';
 import { SnackBarContext } from '../../../../contexts';
-import callApi from '../../../../libs/utils/api';
 
 const styles = (theme) => ({
   root: {
@@ -91,11 +90,11 @@ class AddDialog extends Component {
   onSubmit = async (e, value) => {
     e.preventDefault();
     const { name, email, password } = this.state;
-    const { callTrainees } = this.props;
-    await callApi('/trainee', 'POST', {
-      userData: {
+    // eslint-disable-next-line react/prop-types
+    const { refetchQueries, createTrainee } = this.props;
+    await createTrainee({
+      variables: {
         name,
-        role: 'trainee',
         email,
         password,
       },
@@ -103,7 +102,7 @@ class AddDialog extends Component {
       .then(() => {
         value('Successfully added', 'success');
         this.setState(this.baseState);
-        callTrainees();
+        refetchQueries();
       })
       .catch(() => {
         value('Unable to add', 'error');
@@ -306,7 +305,7 @@ class AddDialog extends Component {
 
 AddDialog.propTypes = {
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
-  callTrainees: PropTypes.func.isRequired,
+  refetchQueries: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(AddDialog);

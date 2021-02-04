@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -8,7 +9,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import PropTypes from 'prop-types';
 import { SnackBarContext } from '../../../../contexts';
-import callApi from '../../../../libs/utils/api';
 
 class DeleteDialog extends Component {
   constructor(props) {
@@ -20,10 +20,16 @@ class DeleteDialog extends Component {
 
   handleDeleteClose = async (event, value) => {
     event.preventDefault();
-    const { data, onClose } = this.props;
+    const {
+      data, onClose, deleteTrainee,
+    } = this.props;
     const { originalId } = data;
     this.setState({ spinner: true });
-    await callApi(`/trainee/${originalId}`, 'DELETE')
+    await deleteTrainee({
+      variables: {
+        id: originalId,
+      },
+    })
       .then(() => {
         setTimeout(() => {
           this.setState({ spinner: false });

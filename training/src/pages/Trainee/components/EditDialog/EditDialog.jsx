@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable quotes */
 import React, { Component } from "react";
@@ -17,7 +18,6 @@ import {
 
 import { Email, Person } from "@material-ui/icons";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import callApi from '../../../../libs/utils/api';
 import { SnackBarContext } from '../../../../contexts';
 
 class EditDialog extends Component {
@@ -135,14 +135,15 @@ class EditDialog extends Component {
   };
 
   onSubmit = async (event, value) => {
-    const { onClose, details } = this.props;
+    const {
+      onClose, details, updateTrainee, refetchQueries,
+    } = this.props;
     const { name, email } = this.state;
     this.setState({ spinner: true });
-    await callApi('/trainee', 'PUT', {
-      originalId: details.originalId,
-      dataToUpdate: {
+    await updateTrainee({
+      variables: {
+        originalId: details.originalId,
         name,
-        role: "trainee",
         email,
       },
     })
@@ -152,10 +153,12 @@ class EditDialog extends Component {
           this.onConsole();
           value('Successfully Edited!', 'success');
           onClose();
+          refetchQueries();
         }, 500);
       })
       .catch(() => {
         value('Unable to edit', 'error');
+        this.onConsole();
         onClose();
       });
   };
