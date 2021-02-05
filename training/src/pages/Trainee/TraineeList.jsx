@@ -16,6 +16,7 @@ import callApi from '../../libs/utils/api';
 import { IsLoadingHOC } from '../../components/HOC';
 import { SnackBarContext } from '../../contexts';
 import { STORED_USERS } from './query';
+import { UPDATED_TRAINEE_SUB, DELETED_TRAINEE_SUB, ADDED_TRAINEE_SUB } from './subscription';
 
 class TraineeList extends Component {
   constructor(props) {
@@ -33,7 +34,57 @@ class TraineeList extends Component {
 
   componentDidMount() {
     const { setLoading } = this.props;
+    const {
+      data: {
+        refetch,
+      },
+    } = this.props;
     setLoading(true);
+    const { data: { subscribeToMore } } = this.props;
+    subscribeToMore({
+      document: UPDATED_TRAINEE_SUB,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData) return prev;
+        const { getAllTrainees: { data } } = prev;
+        const { data: { traineeUpdated } } = subscriptionData;
+        const updatedRecords = [...data].map((record) => {
+          if (record.originalId === traineeUpdated.originalId) {
+            return {
+              ...data,
+              ...traineeUpdated,
+            };
+          }
+          return data;
+        });
+        return {
+          getAllTrainees: {
+            ...prev.getAllTrainees,
+            data: updatedRecords,
+          },
+        };
+      },
+    });
+    subscribeToMore({
+      document: DELETED_TRAINEE_SUB,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData) return prev;
+        const { getAllTrainees: { data } } = prev;
+        if (data.length === 1) {
+          refetch({ skip: String((this.state.page - 1) * 5), limit: String(5), sort: this.state.orderBy });
+        } else {
+          refetch({ skip: String(this.state.page * 5), limit: String(5), sort: this.state.orderBy });
+        }
+        return 0;
+      },
+    });
+    subscribeToMore({
+      document: ADDED_TRAINEE_SUB,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData) return prev;
+        refetch({ skip: String(this.state.page * 5), limit: String(5), sort: this.state.orderBy });
+        return 0;
+      },
+    });
   }
 
   selfCheck = async (value) => {
